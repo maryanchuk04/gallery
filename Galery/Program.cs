@@ -86,18 +86,33 @@ app.MapDelete("/images/{id}", async (IImagesService service, string id) =>
     .WithName("Delete image by id")
     .WithOpenApi();
 
-app.MapPost("/images", async (IUploader uploader, IFormFile file) =>
+app.MapPost("/images", async (
+    IUploader uploader,
+    IImagesService service,
+    HttpContext httpContext) =>
     {
         try
         {
-            var image = await uploader.UploadAsync(file);
-            return Results.Ok(image);
+
+            var form = await httpContext.Request.ReadFormAsync();
+            var file = form.Files.GetFile("image");
+            var category = form["category"].ToString();
+
+
+            if (file is null || string.IsNullOrWhiteSpace(category))
+            {
+                return Results.BadRequest("Ops... Vovan something went wrong :) (Invalid data) // Send form data with 'image' and 'category' fields");
+            }
+
+            var link = await uploader.UploadAsync(file);
+            var res = await service.InsertAsync(link, category);
+            return Results.Ok(res);
         }
         catch (Exception)
         {
             return Results.BadRequest("Ops... Vovan something went wrong :)");
         }
-    }).Accepts<IFormFile>("multipart/form-data").Produces(200).WithName("Create image").WithOpenApi();
+    }).WithName("Create image").WithOpenApi();
 
 #endregion
 

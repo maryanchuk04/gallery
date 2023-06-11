@@ -8,13 +8,6 @@ public class ImageUploader : IUploader
     private const string ApiKey = "4b76823349508cfe6987b62ea7b72eb8";
     private const string ApiUrl = "https://api.imgbb.com/1/upload";
 
-    private readonly IImagesService _imagesService;
-
-    public ImageUploader(IImagesService imagesService)
-    {
-        _imagesService = imagesService;
-    }
-
     public async Task<string> UploadAsync(IFormFile file)
     {
         try
@@ -34,11 +27,10 @@ public class ImageUploader : IUploader
             var responseContent = await response.Content.ReadAsStringAsync();
 
             var responseData = JsonConvert.DeserializeObject<Response>(responseContent);
-            var imageUrl = responseData?.Data?.Url;
+            var imageUrl = responseData?.Data.Url;
 
             if (!string.IsNullOrEmpty(imageUrl))
             {
-                await _imagesService.InsertAsync(imageUrl);
                 return imageUrl;
             }
 

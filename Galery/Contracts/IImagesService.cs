@@ -7,10 +7,10 @@ public interface IImagesService
 {
     Task<IEnumerable<Image>> GetAsync();
 
-    Task<Image> GetAsync(string Id);
+    Task<Image> GetAsync(string id);
 
-    Task DeleteAsync(string Id);
+    Task DeleteAsync(string id);
 
-    Task InsertAsync(string Link);
+    Task<Image> InsertAsync(string link, string category);
 }
 
