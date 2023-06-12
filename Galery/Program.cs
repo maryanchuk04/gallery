@@ -18,14 +18,9 @@ builder.Services.AddSingleton(dbSettings);
 builder.Services.AddScoped<IImagesService, ImagesService>();
 builder.Services.AddScoped<ImagesContext>();
 builder.Services.AddScoped<IUploader, ImageUploader>();
+builder.Services.AddCors();
 
 var app = builder.Build();
-
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
 
 app.UseCors(x =>
 {
@@ -34,6 +29,12 @@ app.UseCors(x =>
         .SetIsOriginAllowed((origin) => true)
         .AllowCredentials();
 });
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 app.UseHttpsRedirection();
 
